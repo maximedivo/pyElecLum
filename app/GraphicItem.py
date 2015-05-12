@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 
 
 
-###
+### 
 class Edge(QtGui.QGraphicsItem):
     Type = QtGui.QGraphicsItem.UserType + 2
 
