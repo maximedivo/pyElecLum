@@ -1,0 +1,6 @@
+id;designation;norme;u0;u;souple;isolant;Matière;rho0;reactance_l;temp_ame
+1;U 1000 R2V;NF C 32-321;600;1000;0;PR;Cuivre;18,51;0,08;90
+2;U 1000 RVFV;NF C 32-322;600;1000;0;PR;Cuivre;18,51;0,08;90
+8;Torsade;NF C 33-209;600;1000;0;PR;Aluminium;29,41;0,08;90
+24;H 07 RN-F;NF C 32-102-4;450;750;1;PR;Cuivre;18,51;0,08;60
+999;Personnalisé;;;;;;;;;
