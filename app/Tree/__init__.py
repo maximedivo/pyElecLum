@@ -229,6 +229,11 @@ class Tree(list):
 
 # Les consommateurs
 
+# Ouvrages non consommateurs :
+#  - RAS
+#  - Regard/boite
+
+
 class Ouvrage(Item):
     """
     Classe décrivant un ouvrage
@@ -237,11 +242,24 @@ class Ouvrage(Item):
         super(Ouvrage, self).__init__(parent);
         self.mnemonique = mnemonique
         self.recepteurs = list()
-        self.recepteurs.append(Recepteur())
+        self.recepteurs.append(Recepteur(self))
         self.conducteur = Conducteur(self, u'%s.c1' % mnemonique)
     
     def __repr__(self):
         return u'Ouvrage \'{0}\' (DU%={1:.2f}% Ikmin={2:.3f}kA Rph-n={3:.1f}mOhm Xph-n={4:.1f}mOhm)'.format(self.mnemonique, self.dub[PH1]/2.30, self.ikmin, self.source.rs + self.rcphn(RHO_1), self.source.xs + self.xcphn())
+    
+    @property
+    def conducteur(self):
+        return self._conducteur
+
+    @conducteur.setter
+    def conducteur(self, value):
+        self._conducteur = value
+        self._conducteur.parent = self
+    
+    @property
+    def phases(self):
+        return self.conducteur.conducteurs[0:4]
     
     @property
     def source(self):
@@ -303,7 +321,7 @@ class Recepteur(object):
     """
     Classe décrivant un récepteur
     """
-    def __init__(self, mnemonique=u'Récepteur 1'):
+    def __init__(self, parent=None, mnemonique=u'Récepteur 1'):
         super(Recepteur, self).__init__();
         self.mnemonique = mnemonique
         self.ib = 1.4
@@ -311,6 +329,8 @@ class Recepteur(object):
         self.cosfi = 0.8
         self.ph = PH1 #phase de raccordement
         self.type = u'SHP250W Ferromagnetique'
+        self.parent = parent
+        self.custom = False
     
     def __repr__(self):
         return u'Récepteur \'%s\' (%s)' % (self.mnemonique, self.type)
@@ -337,14 +357,9 @@ class Conducteur(object):
         self.s[PH3] = 6. # 6 mm²
         self.s[N] = 6. # 6 mm²
         self.s[PE] = 6. # 6 mm²
-        self.conducteurs = list([0.,0.,0.,0.,0.])
-        self.conducteurs[PH1] = True
-        self.conducteurs[PH2] = True
-        self.conducteurs[PH3] = True
-        self.conducteurs[N] = True
-        self.conducteurs[PE] = True
- 
+        self.conducteurs = list([True,True,True,True,True]) 
         self.famille = u'U1000R2V'
+        self.custom = False
     
     def __repr__(self):
         return u'Conducteur \'%s\' (%s) Rc=%1.2fmOhms' % (self.mnemonique, self.type, self.rcph(RHO_1)+self.rcn(RHO_1))
@@ -635,7 +650,7 @@ class Depart(Tree):
         self.mnemonique = mnemonique
         self.d = 1.2 # Coefficient de reserve
         parent.append(self)
-        self._parent = parent
+        self.parent = parent
         self.protection = Disjoncteur()
         self.nb = 0
         
@@ -657,6 +672,10 @@ class Depart(Tree):
             return False
         else:
             return True
+    
+    @property
+    def phases(self):
+        return list([True,True,True,True])
     
     @property
     def ib(self):
