@@ -27,7 +27,7 @@ import icons as I
 APP = u'pyElecLum'
 MAJOR = 0
 MINOR = 5
-BUILD = 2
+BUILD = 3
 VERSION = u'{}.{}.{}'.format(MAJOR, MINOR, BUILD)
 APP_VERSION = u'{} {}'.format(APP, VERSION)
 

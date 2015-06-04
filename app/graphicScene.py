@@ -55,20 +55,25 @@ class Node(QtGui.QGraphicsItem):
     def hoverEnterEvent(self, event):
         print u'Node hover'
         self.update()
+        event.accept()
+        QtGui.QGraphicsItem.hoverEnterEvent(self, event)
     
     def mousePressEvent(self, event):
         self.update()
         print "Node pressed"
+        event.accept()
         QtGui.QGraphicsItem.mousePressEvent(self, event)
 
     def mouseReleaseEvent(self, event):
         self.update()
         print "Node released"
+        event.accept()
         QtGui.QGraphicsItem.mouseReleaseEvent(self, event)
 
     def mouseDoubleClickEvent(self, event):
         self.update()
         print "Node double click"
+        event.accept()
         QtGui.QGraphicsItem.mouseDoubleClickEvent(self, event)
 
     def paint(self, painter, option, widget):
@@ -167,11 +172,11 @@ class OuvrageItem(Node):
         super(OuvrageItem, self).paint(painter, option, widget)
     
     def getToolTip(self):
-        tooltip = self.ouvrage.mnemonique + u'\n'
-        tooltip += u'DU%b: {0:.2f}%, {1:.2f}%, {2:.2f}%\n'.format(self.ouvrage.dub[t.PH1]/2.30, self.ouvrage.dub[t.PH2]/2.30, self.ouvrage.dub[t.PH3]/2.30)
-        tooltip += u'DU%a: {0:.2f}%, {1:.2f}%, {2:.2f}%\n'.format(self.ouvrage.dua[t.PH1]/2.30, self.ouvrage.dua[t.PH2]/2.30, self.ouvrage.dua[t.PH3]/2.30)
-        tooltip += u'Ikmin: {0:.3f}kA\n'.format(self.ouvrage.ikmin)
-        tooltip += u'Rcph-n: {0:.2f}m\u03A9\nXcph-n: {1:.2f}m\u03A9'.format(self.ouvrage.source.rs + self.ouvrage.rcphn(self.ouvrage.tree.protection.rho), self.ouvrage.source.xs + self.ouvrage.xcphn())
+        tooltip = u'<b>{}</b><br/>'.format(self.ouvrage.mnemonique)
+        tooltip += u'<b>DU%b:</b> {0:.2f}%, {1:.2f}%, {2:.2f}%<br/>'.format(self.ouvrage.dub[t.PH1]/2.30, self.ouvrage.dub[t.PH2]/2.30, self.ouvrage.dub[t.PH3]/2.30)
+        tooltip += u'<b>DU%a:</b> {0:.2f}%, {1:.2f}%, {2:.2f}%<br/>'.format(self.ouvrage.dua[t.PH1]/2.30, self.ouvrage.dua[t.PH2]/2.30, self.ouvrage.dua[t.PH3]/2.30)
+        tooltip += u'<b>Ikmin:</b> {0:.3f}kA<br/>'.format(self.ouvrage.ikmin)
+        tooltip += u'<b>Rcph-n:</b> {0:.2f}m\u03A9<br/><b>Xcph-n:</b> {1:.2f}m\u03A9'.format(self.ouvrage.source.rs + self.ouvrage.rcphn(self.ouvrage.tree.protection.rho), self.ouvrage.source.xs + self.ouvrage.xcphn())
         return tooltip
     
     def _parentSlot(self):
@@ -248,9 +253,9 @@ class DepartItem(Node):
         super(DepartItem, self).paint(painter, option, widget)
     
     def getToolTip(self):
-        tooltip = self.depart.mnemonique + u'\n'
-        tooltip += u'IB: {0:.2f}A, {1:.2f}A, {2:.2f}A\n'.format(self.depart.ib[t.PH1], self.depart.ib[t.PH2], self.depart.ib[t.PH3])
-        tooltip += u'IA: {0:.2f}A, {1:.2f}A, {2:.2f}A\n'.format(self.depart.ia[t.PH1], self.depart.ia[t.PH2], self.depart.ia[t.PH3])
+        tooltip = u'<b>{}</b><br/>'.format(self.depart.mnemonique)
+        tooltip += u'<b>IB:</b> {0:.2f}A, {1:.2f}A, {2:.2f}A<br/>'.format(self.depart.ib[t.PH1], self.depart.ib[t.PH2], self.depart.ib[t.PH3])
+        tooltip += u'<b>IA:</b> {0:.2f}A, {1:.2f}A, {2:.2f}A<br/>'.format(self.depart.ia[t.PH1], self.depart.ia[t.PH2], self.depart.ia[t.PH3])
         return tooltip
     
     def _parentSlot(self):
@@ -295,6 +300,8 @@ class CableItem(QtGui.QGraphicsItem):
     
     def hoverEnterEvent(self, event):
         self.update()
+        event.accept()
+        QtGui.QGraphicsItem.hoverEnterEvent(self, event)
     
     def update(self, rect=QtCore.QRectF()):
         self.setToolTip(self.getToolTip())
@@ -343,13 +350,13 @@ class CableItem(QtGui.QGraphicsItem):
                 pt0 += QtCore.QPointF(0, y_step)
         
     def getToolTip(self):
-        tooltip = self.conducteur.mnemonique + u'\n'
-        tooltip += u'IB: {0:.2f}A, {1:.2f}A, {2:.2f}A\n'.format(self.conducteur.ib[t.PH1], self.conducteur.ib[t.PH2], self.conducteur.ib[t.PH3])
-        tooltip += u'IA: {0:.2f}A, {1:.2f}A, {2:.2f}A\n'.format(self.conducteur.ia[t.PH1], self.conducteur.ia[t.PH2], self.conducteur.ia[t.PH3])
+        tooltip = u'<b>{}</b><br/>'.format(self.conducteur.mnemonique)
+        tooltip += u'<b>IB:</b> {0:.2f}A, {1:.2f}A, {2:.2f}A<br/>'.format(self.conducteur.ib[t.PH1], self.conducteur.ib[t.PH2], self.conducteur.ib[t.PH3])
+        tooltip += u'<b>IA:</b> {0:.2f}A, {1:.2f}A, {2:.2f}A<br/>'.format(self.conducteur.ia[t.PH1], self.conducteur.ia[t.PH2], self.conducteur.ia[t.PH3])
         if self.conducteur.is_conforme():
-            tooltip += u'Conforme'
+            tooltip += u'<font color="green"><b>Conforme</b></font>'
         else:
-            tooltip += u'Non Conforme'
+            tooltip += u'<font color="red"><b>Non Conforme</b></font>'
         return tooltip
         
 
@@ -397,9 +404,9 @@ class DepartScene(QtGui.QGraphicsScene):
         else:
             raise ValueError(u'Depart must be a <class t.Depart> instance.')
 
-            
+
 class DepartView(QtGui.QGraphicsView):
-    
+
     def __init__(self, parent):
         QtGui.QGraphicsView.__init__(self, parent)
         self.setRenderHints(QtGui.QPainter.Antialiasing|QtGui.QPainter.TextAntialiasing|QtGui.QPainter.SmoothPixmapTransform)
@@ -418,18 +425,18 @@ class DepartView(QtGui.QGraphicsView):
         
         self.pan = False
         self.lastPos = QtCore.QPoint()
-    
+
     def setScene(self, scene):
         QtGui.QGraphicsView.setScene(self, scene)
         self.centerOn(0,0)
-    
+
     def mouseDoubleClickEvent(self, event):
         if event.button() == QtCore.Qt.MidButton:
             self.zoomReset()
             event.accept()
         else:
             QtGui.QGraphicsView.mouseDoubleClickEvent(self, event)
-    
+
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             #Debug print "Move start"
@@ -437,13 +444,16 @@ class DepartView(QtGui.QGraphicsView):
             self.setCursor(QtCore.Qt.ClosedHandCursor)
             self.setTransformationAnchor(QtGui.QGraphicsView.NoAnchor)
             self.pan = True
+            event.accept()
         QtGui.QGraphicsView.mousePressEvent(self, event)
-  
+
     def mouseMoveEvent(self, event):
         if self.pan:
             delta = (event.pos() - self.lastPos) / (Z_FACTOR ** self.zoom)
             self.translate(delta.x(), delta.y())
             self.lastPos = event.pos()
+            event.accept()
+        QtGui.QGraphicsView.mouseMoveEvent(self, event)
 
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -451,8 +461,9 @@ class DepartView(QtGui.QGraphicsView):
             self.setCursor(QtCore.Qt.ArrowCursor)
             self.setTransformationAnchor(QtGui.QGraphicsView.AnchorViewCenter)
             self.pan = False
+            event.accept()
         QtGui.QGraphicsView.mouseReleaseEvent(self, event)
-        
+
     def wheelEvent(self, event):
         if event.modifiers() == QtCore.Qt.ControlModifier:
             self.zoom += event.delta() / 120
@@ -469,12 +480,12 @@ class DepartView(QtGui.QGraphicsView):
                 event.ignore()
         else:
             QtGui.QGraphicsView.wheelEvent(self, event)
-    
+
     def zoomReset(self):
         self.resetTransform()
         self.zoom = 0
         self.centerOn(0,0)
-    
+
     @property
     def facteur(self):
         return Z_FACTOR ** self.zoom
