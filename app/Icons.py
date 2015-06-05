@@ -46,6 +46,7 @@ ZOOM_OUT_32 = Uri(u'./32x32/zoom_out.png')
 ZOOM_FIT_32 = Uri(u'./32x32/zoom_fit.png')
 ZOOM_REFR_32 = Uri(u'./32x32/zoom_refresh.png')
 FULLSCREEN_32 = Uri(u'./32x32/view_fullscreen_view.png')
+PANEL_32 = Uri(u'./32x32/panel.png')
 
 OPEN_DB_32 = Uri(u'./32x32/folder_database.png')
 EDIT_32 = Uri(u'./32x32/pencil_ruler.png')

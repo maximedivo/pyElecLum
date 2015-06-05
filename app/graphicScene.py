@@ -430,6 +430,9 @@ class DepartView(QtGui.QGraphicsView):
         QtGui.QGraphicsView.setScene(self, scene)
         self.centerOn(0,0)
 
+    def resizeEvent(self, event):
+        self.centerOn(0,0)
+        
     def mouseDoubleClickEvent(self, event):
         if event.button() == QtCore.Qt.MidButton:
             self.zoomReset()

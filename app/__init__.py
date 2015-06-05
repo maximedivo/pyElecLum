@@ -31,7 +31,7 @@ BUILD = 3
 VERSION = u'{}.{}.{}'.format(MAJOR, MINOR, BUILD)
 APP_VERSION = u'{} {}'.format(APP, VERSION)
 
-DESKTOP_PATH = os.path.expanduser(u'~/Desktop/')
+DESKTOP_PATH = os.path.expanduser(u'~/Documents/')
 
 """
 Les class
@@ -58,7 +58,7 @@ class DocumentModel(QtCore.QObject):
         
     def open(self):
         if not self.edited:
-            fileName, selectedFilter = QtGui.QFileDialog.getOpenFileName(self.parent, u'Ouvrir...', DESKTOP_PATH, u'Fichier PyElecLum (*.elc)')
+            fileName, selectedFilter = QtGui.QFileDialog.getOpenFileName(self.parent, u'Ouvrir...', self.currentFolder(), u'Fichier PyElecLum (*.elc)')
             if fileName is not u'':
                 self.fileName = fileName
                 self._open(self.fileName)
@@ -86,7 +86,7 @@ class DocumentModel(QtCore.QObject):
             self.documentChanged.emit()
             return True
         else:
-            fileName, selectedFilter = QtGui.QFileDialog.getSaveFileName(self.parent, u'Enregistrer...', DESKTOP_PATH, u'Fichier PyElecLum (*.elc)')
+            fileName, selectedFilter = QtGui.QFileDialog.getSaveFileName(self.parent, u'Enregistrer...', self.currentFolder(), u'Fichier PyElecLum (*.elc)')
             if fileName is not u'':
                 self.fileName = fileName
                 self._save(self.fileName)
@@ -97,7 +97,7 @@ class DocumentModel(QtCore.QObject):
                 return False
         
     def save_as(self):
-        fileName, selectedFilter = QtGui.QFileDialog.getSaveFileName(self.parent, u'Enregistrer sous...', DESKTOP_PATH, u'Fichier PyElecLum (*.elc)')
+        fileName, selectedFilter = QtGui.QFileDialog.getSaveFileName(self.parent, u'Enregistrer sous...', self.currentFolder(), u'Fichier PyElecLum (*.elc)')
         if fileName is not u'':
                 self.fileName = fileName
                 self._save(self.fileName)
@@ -109,7 +109,13 @@ class DocumentModel(QtCore.QObject):
         pickler = pickle.Pickler(file, pickle.HIGHEST_PROTOCOL)
         pickler.dump(self.armoire)
         file.close()
-    
+
+    def currentFolder(self):
+        if self.fileName is None or u'':
+            return DESKTOP_PATH
+        else:
+            return os.path.dirname(self.fileName)
+        
     def addDepart(self):
         nouveauDepart = t.Depart(self.armoire, u'Nouveau départ')
         self.documentChanged.emit()
@@ -148,7 +154,6 @@ class MainWindow(QtGui.QMainWindow):
     
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(None)
-        self.showMaximized()
         self.setDocumentMode(True)
         self.setAcceptDrops(True)
         self._fullscreen = False
@@ -165,8 +170,9 @@ class MainWindow(QtGui.QMainWindow):
         
         self.initToolBar()
         self.initDock()
-        
         self.initUi()
+        
+        self.showMaximized()
     
     def initTitle(self):
         name = u''
@@ -196,7 +202,6 @@ class MainWindow(QtGui.QMainWindow):
             scene.selectionChanged.connect(self.selectedItemChange)
         
     def initToolBar(self):
-        
         ## Les actions
         newAction = QtGui.QAction(QtGui.QIcon(I.FILE_32), u'Nouveau', self)
         newAction.setShortcut(u'Ctrl+N')
@@ -238,6 +243,10 @@ class MainWindow(QtGui.QMainWindow):
         fullScreenAction.setStatusTip(u'Afficher en plein écran')
         fullScreenAction.triggered.connect(self.fullScreen)
         
+        showDockAction = QtGui.QAction(QtGui.QIcon(I.PANEL_32), u'Afficher panneau d\'édition', self)
+        showDockAction.setShortcut(u'Ctrl+D')
+        showDockAction.setStatusTip(u'Afficher le panneau d\'édition')
+        showDockAction.triggered.connect(self.dockShow)
         
         ## La barre de menu
         self.statusBar()
@@ -255,6 +264,8 @@ class MainWindow(QtGui.QMainWindow):
         
         displayMenu = menubar.addMenu(u'&Affichage')
         displayMenu.addAction(fullScreenAction)
+        displayMenu.addSeparator()
+        displayMenu.addAction(showDockAction)
         displayMenu.addSeparator()
         displayMenu.addAction(redrawAction)
         displayMenu.addAction(zoomResetAction)
@@ -276,9 +287,9 @@ class MainWindow(QtGui.QMainWindow):
     def initDock(self):
         self.propertyDockWidget = pw.EditPanel(u'Propriétés', self)
         self.propertyDockWidget.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea | QtCore.Qt.RightDockWidgetArea)
-        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.propertyDockWidget)
         self.propertyDockWidget.valueChanged.connect(self.document.edit)
         self.propertyDockWidget.valueChanged.connect(self.propertyChange)
+        self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.propertyDockWidget)
         
     def propertyChange(self):
         self.graphicTab.currentWidget().scene().update()
@@ -290,6 +301,7 @@ class MainWindow(QtGui.QMainWindow):
         if len(items) > 0:
             item, = items
         self.propertyDockWidget.setItem(item)
+        self.propertyDockWidget.show()
         
     def redraw(self):
         print u'Redraw'
@@ -318,7 +330,13 @@ class MainWindow(QtGui.QMainWindow):
             self.showFullScreen()
         else:
             self.showMaximized()
-            
+
+    def dockShow(self):
+        if self.propertyDockWidget.isVisible():
+            self.propertyDockWidget.hide()
+        else:
+            self.propertyDockWidget.show()
+
     def dragEnterEvent(self, event):
         event.accept()
         

@@ -415,7 +415,7 @@ class OuvragePanel(QtGui.QTabWidget):
 
         self.ouvrageWidget.ouvrageChanged.connect(self.valueChange)
     
-    def minimumSizeHint(self):
+    def size(self):
         return QtCore.QSize(PANEL_WIDTH,100)
     
     def valueChange(self):
@@ -434,7 +434,7 @@ class ConducteurPanel(QtGui.QTabWidget):
 
         self.conducteurWidget.conducteurChanged.connect(self.valueChange)
     
-    def minimumSizeHint(self):
+    def size(self):
         return QtCore.QSize(PANEL_WIDTH,100)
     
     def valueChange(self):
@@ -451,10 +451,9 @@ class DepartPanel(QtGui.QTabWidget):
         self.departWidget = QtGui.QWidget(self)
         
         self.addTab(self.departWidget, QtGui.QIcon(I.EDIT_32), u'Edition')
-
         #self.departWidget.conducteurChanged.connect(self.valueChange)
     
-    def minimumSizeHint(self):
+    def size(self):
         return QtCore.QSize(PANEL_WIDTH,100)
     
     def valueChange(self):
@@ -469,6 +468,7 @@ class EditPanel(QtGui.QDockWidget):
         
         self.defaultWidget = QtGui.QLabel(u'Selectionnez un élément')
         self.defaultWidget.setMinimumSize(QtCore.QSize(PANEL_WIDTH,100))
+        self.defaultWidget.setAlignment(QtCore.Qt.AlignHCenter|QtCore.Qt.AlignVCenter)
         self.setWidget(self.defaultWidget)
     
     def setItem(self, item):
